@@ -4,7 +4,7 @@ from pydantic import BaseModel, Field, field_validator
 
 
 class TypePackage(BaseModel):
-    id: str
+    id: int
     name: str
 
 
@@ -18,3 +18,13 @@ class Package(BaseModel):
     @field_validator('price_usd')
     def round_decimal(cls, v):
         return round(v, 2)
+
+
+class CreatePackage(Package):
+    pass
+
+
+class PackageResponse(BaseModel):
+    id: int
+    name: str
+    session_id: str

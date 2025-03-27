@@ -1,18 +1,18 @@
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, declarative_base
 from config import settings
 
 
-engine = create_async_engine(settings.db_url, echo=True)
+async_engine = create_async_engine(settings.db_url, echo=True)
 
 
 async_session = sessionmaker(
-    engine,
+    bind=async_engine,
     class_=AsyncSession,
-    expire_on_commit=False,
-    autoflush=False,
-    autocommit=False,
+    expire_on_commit=False
 )
+
+Base = declarative_base()
 
 
 async def get_db():

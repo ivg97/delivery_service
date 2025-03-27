@@ -3,6 +3,8 @@ from contextlib import asynccontextmanager
 import uvicorn
 from fastapi import FastAPI
 
+from delivery_service.src.api.package import router as package_router
+
 
 async def startup():
     print("Подключение к БД...")
@@ -22,6 +24,8 @@ app = FastAPI(
     title='Delivery Service',
     lifespan=lifespan,
 )
+
+app.include_router(package_router, prefix='/api')
 
 
 if __name__ == '__main__':
