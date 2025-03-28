@@ -8,23 +8,29 @@ class TypePackage(BaseModel):
     name: str
 
 
+class PackageResponse(BaseModel):
+    id: int
+    name: str
+
+
 class Package(BaseModel):
-    name: str = Field('Название посылки')
-    weight: str = Field('Вес посылки', gt=0)
-    type: TypePackage = Field('Тип посылки')
-    price_usd: Decimal = Field('Стоимость посылки в $', gt=0)
-    delivery_price: Decimal | str = Field('Стоимость доставки', gt=0)
+    name: str
+    weight: str
+    type: TypePackage
+    price_usd: Decimal
+    delivery_price: Decimal | str
+    session_id: str | None
 
     @field_validator('price_usd')
     def round_decimal(cls, v):
         return round(v, 2)
 
+    def to_response(self, package_id: int) -> PackageResponse:
+        return PackageResponse(
+            id=package_id,
+            name=self.name,
+        )
+
 
 class CreatePackage(Package):
     pass
-
-
-class PackageResponse(BaseModel):
-    id: int
-    name: str
-    session_id: str

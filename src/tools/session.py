@@ -17,16 +17,22 @@ class AsyncSessionManager:
 
     async def validate_session(self, session_id: str) -> bool:
         """Проверяет валидность сессии"""
-        return await self.redis.validate(session_id)
+        return await self.redis.check_exist(session_id)
 
     async def delete_session(self, session_id: str) -> str:
         """Удаляет сессию"""
-        if await self.redis.validate(session_id):
+        if await self.redis.check_exist(session_id):
             await self.redis.delete(session_id)
             return session_id
 
 
-async def get_current_session(session_id: str = Cookie(None, alias="delivery_session")):
+def get_manager():
+    return AsyncSessionManager
+
+
+async def get_current_session(session_id: str | None = None):
+    manager = AsyncSessionManager()
     if not session_id:
-        session_id = str(uuid.uuid4())
-    return session_id
+        return
+    elif await manager.validate_session(session_id):
+        return session_id
