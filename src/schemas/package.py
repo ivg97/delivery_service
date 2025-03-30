@@ -1,4 +1,5 @@
 from decimal import Decimal
+from typing import List
 
 from pydantic import BaseModel, Field, field_validator
 
@@ -6,6 +7,10 @@ from pydantic import BaseModel, Field, field_validator
 class TypePackage(BaseModel):
     id: int
     name: str
+
+
+class ListTypePackage(BaseModel):
+    types: List[TypePackage]
 
 
 class PackageResponse(BaseModel):
@@ -34,3 +39,7 @@ class Package(BaseModel):
 
 class CreatePackage(Package):
     pass
+
+
+class ListPackage(BaseModel):
+    packages: List[Package]
