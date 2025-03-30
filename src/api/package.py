@@ -20,7 +20,7 @@ router = APIRouter(tags=['package'])
 async def register_package(
     package: CreatePackage,
     manager: AsyncSessionManager = Depends(get_manager()),
-    db_session: Session = Depends(get_session())
+    db_session: Session = Depends(get_session)
 ):
     """Doc"""
     if not await manager.validate_session(package.session_id):
@@ -34,7 +34,7 @@ async def register_package(
 @router.get('/get_types',
             response_model=ListTypePackage)
 async def get_type_package(
-        db_session: Session = Depends(get_session()),
+        db_session: Session = Depends(get_session),
 ):
     """Doc"""
     repository = TypePackageRepository(db_session)
@@ -46,11 +46,11 @@ async def get_type_package(
             response_model=ListPackage)
 async def get_packages(
         session_id: str,
-        db_session: Session = Depends(get_session()),
+        db_session: Session = Depends(get_session),
 ):
     """Doc"""
     repository = PackageRepository(db_session)
-    packages = await repository.get_all(session_id)
+    packages = await repository.get_packages(session_id)
     return packages
 
 
@@ -58,7 +58,7 @@ async def get_packages(
             response_model=Package)
 async def get_package_by_id(
         package_id: str,
-        db_session: Session = Depends(get_session()),
+        db_session: Session = Depends(get_session),
 ):
     """Doc"""
     repository = PackageRepository(db_session)

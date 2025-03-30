@@ -4,11 +4,20 @@ from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
 
+    DB_USER: str = 'db_user'
+    DB_PASS: str = 'db_pass'
+    DB_HOST: str = 'db_host'
+    DB_PORT: int = 6379
+    DB_NAME: str = 'db_name'
+
     # TIME_DELIVERY_CALCULATION: int = 300  #
+
     REDIS_HOST: str = '127.0.0.1'
     REDIS_PORT: int = 6379
 
     SOURCE_USD: str = 'www.cbr-xml-daily.ru/daily_json.js'
+    CACHE_KEY = "usd_rate"
+    CACHE_TIMEOUT = 3600
 
     @property
     def db_url(self):

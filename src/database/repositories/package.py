@@ -1,5 +1,7 @@
-from typing import List
+from decimal import Decimal
+from typing import List, Tuple
 
+from sqlalchemy import select, update, bindparam
 from sqlalchemy.orm import Session
 
 from delivery_service.src.schemas.package import Package as PackageSchema
@@ -14,7 +16,7 @@ class PackageRepository:
         async with self.db_session as session:
             pass
 
-    async def get_all(self,
+    async def get_packages(self,
                       session_id: str) -> List[Package]:
         async with self.db_session as session:
             pass
@@ -24,6 +26,24 @@ class PackageRepository:
                         package_id: int) -> Package:
         async with self.db_session as session:
             pass
+
+    async def get_all(self):
+        query = select(Package)
+        async with self.db_session as session:
+            ex = await session.execute(query)
+            result = ex.scalars.all()
+            return result
+
+    async def update_calc_bulk(self, updates: List[Tuple[int, Decimal]]):
+        stmt = update(Package).where(
+            Package.id == bindparam('id')
+        ).values(delivery_price=bindparam('delivery_price'))
+        async with self.db_session as session:
+            await session.execute(stmt, [
+                {'id': _id, 'delivery_price': delivery_price}
+                for _id, delivery_price in updates
+            ])
+            await session.commit()
 
 
 class TypePackageRepository:
