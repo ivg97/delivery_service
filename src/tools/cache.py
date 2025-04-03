@@ -20,3 +20,16 @@ class SessionCache:
         """Удаляет сессию"""
         if await self.cli.exists(session_id):
             await self.cli.delete(session_id)
+
+
+class USDCache:
+    def __init__(self):
+        self.cli = settings.create_redis_client
+
+    async def set(self, usd: float):
+        await self.cli.set(name='usd', value=usd)
+
+    async def get(self):
+        usd = await self.cli.get('usd')
+        if usd:
+            return usd

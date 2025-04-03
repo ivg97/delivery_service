@@ -9,6 +9,10 @@ class TypePackage(BaseModel):
     name: str
 
 
+class CreateTypePackage(BaseModel):
+    name: str
+
+
 class ListTypePackage(BaseModel):
     types: List[TypePackage]
 

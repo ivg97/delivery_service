@@ -1,10 +1,12 @@
 from contextlib import asynccontextmanager
 
 import uvicorn
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 
 from delivery_service.src.api.package import router as package_router
 from delivery_service.src.api.session import router as session_router
+from delivery_service.src.api.delivery_calculation import (router as
+                                                           delivery_router)
 
 
 async def startup():
@@ -28,6 +30,7 @@ app = FastAPI(
 
 app.include_router(package_router, prefix='/package')
 app.include_router(session_router, prefix='/session')
+app.include_router(delivery_router, prefix='/delivery')
 
 
 if __name__ == '__main__':

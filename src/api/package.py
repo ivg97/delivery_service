@@ -1,16 +1,16 @@
 import uuid
+from typing import Optional, List
 
 from fastapi import APIRouter, Cookie, HTTPException, Depends
-from fastapi.openapi.models import Response
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session
 
 from delivery_service.src.database.repositories.package import \
     TypePackageRepository, PackageRepository
 from delivery_service.src.db import get_session
 from delivery_service.src.schemas.package import PackageResponse, \
-    CreatePackage, TypePackage, ListTypePackage, ListPackage, Package
-from delivery_service.src.tools.session import AsyncSessionManager, \
-    get_current_session, get_manager
+    CreatePackage, ListTypePackage, ListPackage, Package
+from delivery_service.src.tools.session import AsyncSessionManager, get_manager
 
 router = APIRouter(tags=['package'])
 
@@ -25,16 +25,14 @@ async def register_package(
     """Doc"""
     if not await manager.validate_session(package.session_id):
         raise HTTPException(status_code=401, detail='Invalid session')
-
     repository = PackageRepository(db_session)
     order = await repository.create(package)
     return package.to_response(package_id=order.id)
 
 
-@router.get('/get_types',
-            response_model=ListTypePackage)
+@router.get('/get_types')
 async def get_type_package(
-        db_session: Session = Depends(get_session),
+        db_session: AsyncSession = Depends(get_session),
 ):
     """Doc"""
     repository = TypePackageRepository(db_session)
@@ -42,8 +40,7 @@ async def get_type_package(
     return types
 
 
-@router.get('/get_packages',
-            response_model=ListPackage)
+@router.get('/get_packages')
 async def get_packages(
         session_id: str,
         db_session: Session = Depends(get_session),
@@ -54,13 +51,15 @@ async def get_packages(
     return packages
 
 
-@router.get('get_by_id',
-            response_model=Package)
+@router.get('get_by_id')
 async def get_package_by_id(
-        package_id: str,
+        session_id: str,
+        package_id: int,
         db_session: Session = Depends(get_session),
 ):
     """Doc"""
     repository = PackageRepository(db_session)
-    package = await repository.get_by_id(package_id)
+    package = await repository.get_by_id(
+        session_id=session_id,
+        package_id=package_id)
     return package

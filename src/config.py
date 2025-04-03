@@ -15,9 +15,9 @@ class Settings(BaseSettings):
     REDIS_HOST: str = '127.0.0.1'
     REDIS_PORT: int = 6379
 
-    SOURCE_USD: str = 'www.cbr-xml-daily.ru/daily_json.js'
-    CACHE_KEY = "usd_rate"
-    CACHE_TIMEOUT = 3600
+    SOURCE_USD: str = 'https://www.cbr-xml-daily.ru/daily_json.js'
+    CACHE_KEY: str = "usd_rate"
+    CACHE_TIMEOUT: int = 3600
 
     @property
     def db_url(self):
@@ -32,5 +32,8 @@ class Settings(BaseSettings):
         )
         return redis_client
 
+    class Config:
+        extra = 'allow'
 
-settings = Settings()
+
+settings = Settings(_env_file='../.env')
